@@ -1,0 +1,7 @@
+go 1.21.7
+
+use (
+	./api-gin-clase1
+	./contex-get-clase2/ejecicio1-tienda
+	./diseñoApi-clase4
+)
