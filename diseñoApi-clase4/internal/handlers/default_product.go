@@ -164,3 +164,22 @@ func (d *DefaultProduct) GetById() http.HandlerFunc {
 		return
 	}
 }
+
+func (d *DefaultProduct) Search() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Obtener el valor de priceGt de la URL
+		priceStr := r.URL.Query().Get("priceGt")
+
+		// Convertir el valor a float64
+		priceFloat, err := strconv.ParseFloat(priceStr, 64)
+		if err != nil {
+			web.Text(w, http.StatusNotFound, "valor parámetro no valido")
+			return
+		}
+
+		response := d.service.GetByQuery(priceFloat)
+
+		web.JSON(w, http.StatusOK, response)
+		return
+	}
+}

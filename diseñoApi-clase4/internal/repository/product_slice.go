@@ -68,3 +68,15 @@ func (p *ProductSlice) GetAll() []internal.Product {
 	// Retorna el nuevo slice, que es una copia de p.db.
 	return copiedProducts
 }
+
+func (p *ProductSlice) GetByQuery(price float64) []internal.Product {
+	var result []internal.Product // Creamos una lista vacía para almacenar los productos que cumplan con la condición.
+
+	for _, product := range p.db { // Recorremos cada producto en la lista de productos.
+		if product.Price > price { // Comprobamos si el precio del producto es mayor al precio especificado.
+			result = append(result, product) // Si cumple con la condición, añadimos el producto a la lista de resultados.
+		}
+	}
+
+	return result // Retornamos la lista de productos que cumplen con la condición y nil como error.
+}

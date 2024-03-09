@@ -45,3 +45,10 @@ func (p *ProductDefault) FindByID(id int) (*internal.Product, error) {
 	return product, nil
 
 }
+
+// encuentra todos los porductos cuyo precio sea mayor al apsado por parámetro
+func (p *ProductDefault) GetByQuery(price float64) []internal.Product {
+
+	result := p.repository.GetByQuery(price)
+	return result
+}

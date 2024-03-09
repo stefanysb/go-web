@@ -34,6 +34,8 @@ type ProductRepository interface {
 	FindByID(id int) (*Product, error)
 	// GetAll encuentra todos los porductos de inventario
 	GetAll() []Product
+	// encuentra todos los porductos cuyo precio sea mayor al apsado por parámetro
+	GetByQuery(price float64) []Product
 }
 
 // ProductService es una interfaz para operaciones de servicio relacionadas con productos
@@ -43,4 +45,6 @@ type ProductService interface {
 	FindByID(id int) (*Product, error)
 	// GetAll encuentra todos los porductos de inventario
 	GetAll() []Product
+	// encuentra todos los porductos cuyo precio sea mayor al apsado por parámetro
+	GetByQuery(price float64) []Product
 }
