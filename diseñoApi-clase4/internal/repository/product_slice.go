@@ -80,3 +80,15 @@ func (p *ProductSlice) GetByQuery(price float64) []internal.Product {
 
 	return result // Retornamos la lista de productos que cumplen con la condición y nil como error.
 }
+
+// Update actualiza un producto en ProductSlice.
+func (p *ProductSlice) Update(product internal.Product) error {
+	for i, pro := range p.db {
+		if pro.ID == product.ID {
+			// Actualiza directamente el producto en el slice.
+			p.db[i] = product
+			return nil
+		}
+	}
+	return internal.ErrProductNotFound
+}

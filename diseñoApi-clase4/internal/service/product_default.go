@@ -52,3 +52,8 @@ func (p *ProductDefault) GetByQuery(price float64) []internal.Product {
 	result := p.repository.GetByQuery(price)
 	return result
 }
+
+func (p *ProductDefault) Update(product internal.Product) error {
+	result := p.repository.Update(product)
+	return result
+}

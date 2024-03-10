@@ -27,6 +27,7 @@ func main() {
 		r.Get("/", hd.Get())
 		r.Get("/{productId}", hd.GetById())
 		r.Get("/priceGt", hd.Search())
+		r.Put("/{productId}", hd.Update())
 	})
 
 	// server

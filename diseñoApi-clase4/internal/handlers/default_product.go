@@ -98,6 +98,8 @@ func (d *DefaultProduct) Create() http.HandlerFunc {
 			Price:       body.Price,
 		}
 
+		//compruebo que la fecha venga en el fomrato necesario
+
 		// Guardar el producto (paso 2)
 		err1 := d.service.Save(&product)
 		if err1 != nil {
@@ -181,5 +183,65 @@ func (d *DefaultProduct) Search() http.HandlerFunc {
 
 		web.JSON(w, http.StatusOK, response)
 		return
+	}
+}
+
+func (d *DefaultProduct) Update() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// extraigo el id
+		idStr := chi.URLParam(r, "productId")
+
+		// convierto el id a int
+		idProduct, err := strconv.Atoi(idStr)
+		if err != nil {
+			web.Text(w, http.StatusBadRequest, "invalid id")
+			return
+		}
+
+		// extraigo lo que haya en el body
+		bytes, err := io.ReadAll(r.Body)
+		if err != nil {
+			web.Text(w, http.StatusBadRequest, "invalid request body")
+			return
+		}
+
+		// manpeo a un mapa dinamico para verificar los campos
+		bodyMap := map[string]any{}
+		if err := json.Unmarshal(bytes, &bodyMap); err != nil {
+			web.Text(w, http.StatusBadRequest, "invalid request body")
+			return
+		}
+
+		// verifico que los campos que vengan en el body sean obligatorios
+		if err := tools.CheckFieldExistance(bodyMap, "name", "quantity", "code_value", "is_published", "expiration", "price"); err != nil {
+			var fieldError *tools.FieldError
+			if errors.As(err, &fieldError) {
+				web.JSON(w, http.StatusBadRequest, map[string]any{"message": fmt.Sprintf("%s is required", fieldError.Field)})
+				return
+			}
+
+			web.JSON(w, http.StatusInternalServerError, map[string]any{"message": "internal server error"})
+			return
+		}
+
+		// paso a una estrutura valida, intentamos hacerlo de una vez a porduct
+		var productFromBody internal.Product
+		if err := json.Unmarshal(bytes, &productFromBody); err != nil {
+			web.Text(w, http.StatusBadRequest, "invalid request body")
+			return
+		}
+		//valido la fecha
+		if !validateDate(productFromBody.Expiration) {
+			web.Text(w, http.StatusBadRequest, "ivalide date")
+		}
+
+		//sete el id
+		productFromBody.ID = idProduct
+
+		// guardo el producto
+		d.service.Update(productFromBody)
+
+		web.JSON(w, http.StatusOK, productFromBody)
+
 	}
 }

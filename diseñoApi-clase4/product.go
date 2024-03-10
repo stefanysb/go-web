@@ -6,7 +6,7 @@ import (
 
 // Product define la estructura para un producto
 type Product struct {
-	ID          int     `json:"id"`           // ID es el identificador único del producto
+	ID          int     `json:"id,omitempty"` // ID es el identificador único del producto
 	Name        string  `json:"name"`         // Name es el nombre del producto
 	Quantity    int     `json:"quantity"`     // Quantity indica la cantidad disponible del producto
 	CodeValue   string  `json:"code_value"`   // CodeValue es el código de valor único para el producto
@@ -22,7 +22,7 @@ var (
 	ErrProductDuplicated = errors.New("product already exists")
 	// ErrProductInvalidField se utiliza cuando un producto tiene campos inválidos
 	ErrProductInvalidField = errors.New("product has invalid fields")
-	// ErrProductInternal se utiliza cuando un producto no puede ser procesado debido a un error interno
+	///ErrProductInternal se utiliza cuando un producto no puede ser procesado debido a un error interno
 	ErrProductInternal = errors.New("product can't be processed")
 )
 
@@ -36,6 +36,8 @@ type ProductRepository interface {
 	GetAll() []Product
 	// encuentra todos los porductos cuyo precio sea mayor al apsado por parámetro
 	GetByQuery(price float64) []Product
+	// actualiza un prodcuto
+	Update(product Product) error
 }
 
 // ProductService es una interfaz para operaciones de servicio relacionadas con productos
@@ -47,4 +49,6 @@ type ProductService interface {
 	GetAll() []Product
 	// encuentra todos los porductos cuyo precio sea mayor al apsado por parámetro
 	GetByQuery(price float64) []Product
+	// actualiza un prodcuto
+	Update(product Product) error
 }
