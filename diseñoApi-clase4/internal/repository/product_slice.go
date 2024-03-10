@@ -83,6 +83,14 @@ func (p *ProductSlice) GetByQuery(price float64) []internal.Product {
 
 // Update actualiza un producto en ProductSlice.
 func (p *ProductSlice) Update(product internal.Product) error {
+	// valido que el codigo no esté duplicado
+	for _, pro := range p.db {
+		if pro.CodeValue == product.CodeValue {
+			// Actualiza directamente el producto en el slice.
+
+			return internal.ErrProductDuplicated
+		}
+	}
 	for i, pro := range p.db {
 		if pro.ID == product.ID {
 			// Actualiza directamente el producto en el slice.

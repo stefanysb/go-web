@@ -239,7 +239,11 @@ func (d *DefaultProduct) Update() http.HandlerFunc {
 		productFromBody.ID = idProduct
 
 		// guardo el producto
-		d.service.Update(productFromBody)
+		err = d.service.Update(productFromBody)
+		if err != nil {
+			web.Text(w, http.StatusBadRequest, err.Error())
+			return
+		}
 
 		web.JSON(w, http.StatusOK, productFromBody)
 
