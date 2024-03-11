@@ -28,6 +28,8 @@ func main() {
 		r.Get("/{productId}", hd.GetById())
 		r.Get("/priceGt", hd.Search())
 		r.Put("/{productId}", hd.Update())
+		r.Patch("/{id}", hd.UpdatePartial())
+		// DELETE /tasks/{id}
 	})
 
 	// server

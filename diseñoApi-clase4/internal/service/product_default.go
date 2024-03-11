@@ -57,3 +57,9 @@ func (p *ProductDefault) Update(product internal.Product) error {
 	result := p.repository.Update(product)
 	return result
 }
+
+func (p *ProductDefault) UpdatePartial(id int, fields map[string]interface{}) (err error) {
+	// update the task partially
+	err = p.repository.UpdatePartial(id, fields)
+	return
+}

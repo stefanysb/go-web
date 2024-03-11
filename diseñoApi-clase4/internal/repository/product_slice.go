@@ -2,6 +2,8 @@ package repository
 
 import (
 	"diseno-api"
+	"diseno-api/tools"
+	"fmt"
 )
 
 // NewProductSlice inicializa una nueva instancia de ProductSlice.
@@ -51,12 +53,12 @@ func (p *ProductSlice) Save(product *internal.Product) error {
 
 // FindByID encuentra un producto por su ID.
 func (p *ProductSlice) FindByID(id int) (*internal.Product, error) {
-	for _, product := range p.db {
-		if product.ID == id {
-			return &product, nil
+	for i := range p.db {
+		if p.db[i].ID == id {
+			return &p.db[i], nil // Devuelve la referencia al elemento dentro del slice
 		}
 	}
-	return nil, internal.ErrProductNotFound // Asume que tienes un error definido para productos no encontrados.
+	return nil, internal.ErrProductNotFound
 }
 func (p *ProductSlice) GetAll() []internal.Product {
 	// Inicializa un nuevo slice para los productos copiados con la misma longitud que p.db.
@@ -99,4 +101,83 @@ func (p *ProductSlice) Update(product internal.Product) error {
 		}
 	}
 	return internal.ErrProductNotFound
+}
+
+func (p *ProductSlice) UpdatePartial(id int, fields map[string]any) (err error) {
+	// busco el producto
+	prod, err := p.FindByID(id)
+	if err != nil {
+		return internal.ErrProductNotFound
+	}
+
+	//iterp spbre los campos para actualizar, Si el campo existe en el mapa de campos, lo actulizo
+	// es decir, si el campo viene entre los capos de la peticion, lo actulizo
+	for key, value := range fields {
+		switch key {
+
+		case "Name", "name":
+			name, ok := value.(string)
+			if !ok {
+				return &tools.FieldError{
+					Field: key,
+					Msg:   fmt.Sprintf("%s error type assertion", key),
+				}
+			}
+			prod.Name = name
+		case "Quantity", "quantity":
+			floatVal, ok := value.(float64)
+			if !ok {
+				return &tools.FieldError{
+					Field: key,
+					Msg:   fmt.Sprintf("%s error type assertion\"", key),
+				}
+
+			}
+			prod.Quantity = int(floatVal)
+		case "CodeValue", "code_value":
+			codeValue, ok := value.(string)
+			if !ok {
+				return &tools.FieldError{
+					Field: key,
+					Msg:   fmt.Sprintf("%s error type assertion\"", key),
+				}
+			}
+			prod.CodeValue = codeValue
+		case "IsPublished", "is_published":
+			isPublished, ok := value.(bool)
+			if !ok {
+				return &tools.FieldError{
+					Field: key,
+					Msg:   fmt.Sprintf("%s error type assertion\"", key),
+				}
+			}
+			prod.IsPublished = isPublished
+		case "Expiration", "expiration":
+			expiration, ok := value.(string)
+			if !ok {
+				return &tools.FieldError{
+					Field: key,
+					Msg:   fmt.Sprintf("%s error type assertion\"", key),
+				}
+			}
+			prod.Expiration = expiration
+		case "Price", "price":
+			price, ok := value.(float64)
+			if !ok {
+				return &tools.FieldError{
+					Field: key,
+					Msg:   fmt.Sprintf("%s error type assertion\"", key),
+				}
+			}
+			prod.Price = price
+		default:
+			return &tools.FieldError{
+				Field: "default",
+				Msg:   fmt.Sprintf("%s error type assertion\"", key),
+			}
+		}
+	}
+
+	return nil
+	// actulizo la teraa
 }

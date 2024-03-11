@@ -38,6 +38,8 @@ type ProductRepository interface {
 	GetByQuery(price float64) []Product
 	// actualiza un prodcuto
 	Update(product Product) error
+	//reliza una actilizacion parcial de los campos
+	UpdatePartial(id int, fields map[string]any) (err error)
 }
 
 // ProductService es una interfaz para operaciones de servicio relacionadas con productos
@@ -51,4 +53,6 @@ type ProductService interface {
 	GetByQuery(price float64) []Product
 	// actualiza un prodcuto
 	Update(product Product) error
+	//reliza una actilizacion parcial de los campos
+	UpdatePartial(id int, fields map[string]any) (err error)
 }

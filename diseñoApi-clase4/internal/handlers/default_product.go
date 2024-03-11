@@ -249,3 +249,42 @@ func (d *DefaultProduct) Update() http.HandlerFunc {
 
 	}
 }
+
+func (d *DefaultProduct) UpdatePartial() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// - id from path
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			web.Text(w, http.StatusBadRequest, "invalid id")
+			return
+		}
+		// - parse map from json
+		bodyMap := make(map[string]any)
+		if err := web.JSONdecoder(r, &bodyMap); err != nil {
+			web.Text(w, http.StatusBadRequest, "invalid request body")
+			return
+		}
+		//hacer validaciones de campos requeridos
+		// Suponiendo que validateDate requiere un string como argumento
+		expiration, ok := bodyMap["Expiration"].(string)
+		if ok {
+			if !validateDate(expiration) {
+				web.Text(w, http.StatusBadRequest, "invalid format field expiration")
+				return
+			}
+
+		}
+
+		err = d.service.UpdatePartial(id, bodyMap)
+
+		if err != nil {
+			var errorFild *tools.FieldError
+			errors.As(err, &errorFild)
+			web.JSON(w, http.StatusBadRequest, map[string]any{"message": errorFild.Error()})
+			return
+		}
+
+		return
+
+	}
+}
